@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="270.0" maxWidth="300.0" minHeight="270.0" minWidth="300.0" prefHeight="270.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ModuloEngrenamentoController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <Label layoutX="13.0" layoutY="21.0" text="Módulo de Engrenamento" />
+            <Label layoutX="14.0" layoutY="53.0" text="O valor do módulo de engrenamento foi">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tfValorModuloEngrenamento" layoutX="138.0" layoutY="191.0" prefHeight="27.0" prefWidth="45.0" />
+            <TextField fx:id="lbValorModuloEngrenamento" disable="true" layoutX="114.0" layoutY="77.0" prefHeight="27.0" prefWidth="45.0" />
+            <Label layoutX="12.0" layoutY="112.0" text="Os módulos normalizados na faixa de 1,0 a 4,0 mm">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="12.0" layoutY="129.0" text="são: 1.0; 1.25; 1.50; 1.75; 2.00; 2.25; 2.50; 2.75; 3.00;">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="13.0" layoutY="148.0" text="3.25; 3.50; 3.75; 4.00; ">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="175.0" text="Se desejar alterar o valor use o campo abaixo:">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="197.0" text="Módulo normalizado:">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Button fx:id="btManterModuloEngrenamento" onAction="#manterModuloEngrenamento" layoutX="81.0" layoutY="228.0" mnemonicParsing="false" text="Manter">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Button>
+            <Button fx:id="btAlterarModuloEngrenamento" onAction="#alterarModuloEngrenamento" layoutX="163.0" layoutY="228.0" mnemonicParsing="false" text="Alterar">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Button>
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>
