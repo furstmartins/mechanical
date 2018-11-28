@@ -3,21 +3,30 @@ package application;
 import org.apache.commons.lang3.StringUtils;
 
 import calculation.Calculator;
+import calculation.GearMath;
+import calculation.GeometricGearCalculation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class SampleController {
 
 	Calculator calc = new Calculator();
-	
+
 	@FXML TextField tfPotencia;
 	@FXML TextField tfRotacao;
 	@FXML TextField tfDureza;
@@ -32,7 +41,7 @@ public class SampleController {
 	@FXML Button btCalcular;
 	@FXML Button btPanelDureza;
 	@FXML Button btPanelFatorServico;
-	
+
 	@FXML Label lbMt;
 	@FXML Label lbRelacaoTransmissao;
 	@FXML Label lbFatorDurabilidade;
@@ -42,16 +51,19 @@ public class SampleController {
 	@FXML Label lbModuloEngrenamento;
 	@FXML GridPane gpResultado;
 	@FXML Button btRecalcular;
-	
+
 	@FXML TextField tfModuloNormalizado;
 	@FXML Label lbModuloNormalizado;
-	
+
 	@FXML Label lbTensaoAdmissivel;
 	@FXML Label lbNovoModulo;
 	@FXML TextField tfTensaoAdmissivel;
 	@FXML TextField tfNovoModulo;
 	@FXML Button btRedimensionar;
 	@FXML Button btLimpar;
+	@FXML Button btResumo;
+
+	@FXML GridPane gpResumo;
 
 	double potencia;
 	double n;
@@ -74,20 +86,18 @@ public class SampleController {
 	double pressaoAdmissivel = 0;
 	double volumeMinimo = 0;
 	double diametroPrimitivo = 0;
-	
+
 	//Resultado da normalizacao
 	double diametroPrimitivoNormalizado = 0;
 	double larguraEngrenagem = 0;
 	double forcaTangencial = 0;
 	double tensaoMaxima = 0;
 
-	
 	private int posicaoNoGrid = 0;
 
 	double tensaoAdmissivel = 0;
 	double novoModulo = 0;
 
-	
 	@FXML
 	public void calcula(ActionEvent event) {
 		for (int i = 0; i < gpResultado.getChildren().size(); i++) {
@@ -97,38 +107,38 @@ public class SampleController {
 			}
 		}
 		posicaoNoGrid = 0;
-		
+
 		StringBuilder alerta = new StringBuilder();
 		boolean validate = validaCampos(alerta);
-		
+
 
 		if (!validate) {
-			showAlert("Campos obrigatÃ³rios nÃ£o preenchidos", alerta.toString());
+			showAlert("Campos obrigatórios não preenchidos", alerta.toString());
 			return;
 		}
 
 		Mt = calc.calculaTorquePinhao(potencia, n);
-		preencheGridPane("Torque no pinhÃ£o (Mt) [Nmm]", Mt);
+		preencheGridPane("Torque no pinhão (Mt) [Nmm]", Mt);
 
 		i = calc.calculaRelacaoTransmissao(Z1, Z2);
-		preencheGridPane("RelaÃ§Ã£o de transmissao (i)", i);
+		preencheGridPane("Relação de transmissao (i)", i);
 
 		W = calc.calculaFatorDurabilidade(n, duracao);
 		preencheGridPane("Fator de durabilidade (W)", W);
-		
+
 		Wraiz6 = calc.calculaFatorDurabilidadeRaiz6(n, duracao);
 
 		pressaoAdmissivel = calc.calculaPressaoAdmissivel(durezaHB, Wraiz6);
-		preencheGridPane("Pressao Admissivel (Padm) [N/mm2]", pressaoAdmissivel);
+		preencheGridPane("Pressao Admissível (Padm) [N/mm2]", pressaoAdmissivel);
 
 		volumeMinimo = calc.calculaVolumeMinimoPositivo(Mt, pressaoAdmissivel, i, fatorServico);
-		preencheGridPane("Volume MÃ­nimo (b1d2) [mm3]", volumeMinimo);
+		preencheGridPane("Volume Mínimo (b1d2) [mm3]", volumeMinimo);
 
 		diametroPrimitivo = calc.calculaDiametroPrimitivo(volumeMinimo, razaoLarguraDiametro);
-		preencheGridPane("DiÃ¢metro Primitivo [mm]", diametroPrimitivo);
+		preencheGridPane("Diâmetro Primitivo [mm]", diametroPrimitivo);
 
 		moduloEngrenamento = calc.calculaModuloEngrenamento(diametroPrimitivo, Z1);
-		preencheGridPane("MÃ³dulo de Engrenamento (m) [mm]", moduloEngrenamento);
+		preencheGridPane("Módulo de Engrenamento (m) [mm]", moduloEngrenamento);
 
 		showAlertModuloNormalizado(round2Decimal(moduloEngrenamento));
 	}
@@ -143,32 +153,30 @@ public class SampleController {
 		gpResultado.addRow(posicaoNoGrid, lb2);
 		posicaoNoGrid++;
 	}
-	
+
 	private void preencheTopicoGridPane(String label) {
-		Font fonte = new Font(11);
+		Font fonte = Font.font("Verdana", FontWeight.BOLD, 12);
 		Label lb1 = new Label(label);
 		lb1.setFont(fonte);
 		gpResultado.addRow(posicaoNoGrid, lb1);
 		posicaoNoGrid++;
 	}
-	
+
 	private void showAlertModuloNormalizado(double value) {
 		StringBuilder alerta = new StringBuilder();
-		alerta.append("O valor do mÃ³dulo de engrenamento foi " + value)
-			.append("\n\nOs mÃ³dulos normalizados na faixa de 1,0 a 4,0 mm sÃ£o: ")
+		alerta.append("O valor do módulo de engrenamento foi " + value)
+			.append("\n\nOs módulos normalizados na faixa de 1,0 a 4,0 mm são: ")
 			.append("1.0; 1.25; 1.50; 1.75; 2.00; 2.25; 2.50; 2.75; 3.00; 3.25; 3.50; 3.75; 4.00; ")
-			.append("\n\nDesejar alterar o valor do MÃ³dulo?");
-		
+			.append("\n\nDesejar alterar o valor do Módulo?");
+
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 	    alert.initModality(Modality.APPLICATION_MODAL);
-	    alert.setTitle("MÃ³dulo de Engrenamento");
+	    alert.setTitle("Módulo de Engrenamento");
 	    alert.setContentText(alerta.toString());
 	    alert.setHeaderText("");
 	    alert.showAndWait();
-	    
+
 	    if (alert.getResult() == ButtonType.OK) {
-	        //do stuff
-	    	System.out.println("pressed ok: " + moduloEngrenamento);
 	    	lbModuloNormalizado.setVisible(true);
 	    	tfModuloNormalizado.setVisible(true);
 	    	btCalcular.setVisible(false);
@@ -177,28 +185,28 @@ public class SampleController {
 	    	System.out.println("pressed cancel");
 	    }
 	}
-	
+
 	private boolean validaCampos(StringBuilder alerta) {
 		boolean validate = true;
 		if (tfPotencia == null || StringUtils.isBlank(tfPotencia.getText())) {
-			alerta.append("PotÃªncia [W]: deve ser preenchido");
+			alerta.append("Potência [W]: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				potencia = new Double(tfPotencia.getText());
 			} catch (Exception e) {
-				alerta.append("O valor da PotÃªncia deve ser um nÃºmero decimal");
+				alerta.append("O valor da Potência deve ser um número decimal");
 				validate = false;
 			}
 		}
 		if (tfRotacao == null || StringUtils.isBlank(tfRotacao.getText())) {
-			alerta.append("\nRotaÃ§Ã£o [rmp]: deve ser preenchido");
+			alerta.append("\nRotação [rmp]: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				n = new Double(tfRotacao.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor da RotaÃ§Ã£o deve ser um nÃºmero decimal");
+				alerta.append("\nO valor da Rotação deve ser um número decimal");
 				validate = false;
 			}
 		}
@@ -209,73 +217,73 @@ public class SampleController {
 			try {
 				durezaHB = new Integer(tfDureza.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor da Dureza deve ser um nÃºmero inteiro");
+				alerta.append("\nO valor da Dureza deve ser um número inteiro");
 				validate = false;
 			}
 		}
 		if (tfDuracao == null || StringUtils.isBlank(tfDuracao.getText())) {
-			alerta.append("\nDuraÃ§Ã£o [h]: deve ser preenchido");
+			alerta.append("\nDuração [h]: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				duracao = new Integer(tfDuracao.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor da DuraÃ§Ã£o deve ser um nÃºmero inteiro");
+				alerta.append("\nO valor da Duração deve ser um número inteiro");
 				validate = false;
 			}
 		}
 		if (tfAnguloPressao == null || StringUtils.isBlank(tfAnguloPressao.getText())) {
-			alerta.append("\nÃ‚ngulo PressÃ£o: deve ser preenchido");
+			alerta.append("\nÂngulo Pressão: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				anguloPressao = new Double(tfAnguloPressao.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor do Ã‚ngulo de PressÃ£o deve ser um nÃºmero decimal");
+				alerta.append("\nO valor do Ângulo de Pressão deve ser um número decimal");
 				validate = false;
 			}
 		}
 		if (tfFatorServico == null || StringUtils.isBlank(tfFatorServico.getText())) {
-			alerta.append("\nFator de ServiÃ§o: deve ser preenchido");
+			alerta.append("\nFator de Serviço: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				fatorServico = new Double(tfFatorServico.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor do Fator de ServiÃ§o deve ser um nÃºmero decimal");
+				alerta.append("\nO valor do Fator de Serviço deve ser um número decimal");
 				validate = false;
 			}
 		}
 		if (tfRazaoLarguraDiametro == null || StringUtils.isBlank(tfRazaoLarguraDiametro.getText())) {
-			alerta.append("\nRelaÃ§Ã£o largura/diÃ¢metro primitivo: deve ser preenchido");
+			alerta.append("\nRelação largura/diâmetro primitivo: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				razaoLarguraDiametro = new Double(tfRazaoLarguraDiametro.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor da RazÃ£o entre Largura e DiÃ¢metro deve ser um nÃºmero decimal");
+				alerta.append("\nO valor da Razão entre Largura e Diâmetro deve ser um número decimal");
 				validate = false;
 			}
 		}
 		if (tfZ1 == null || StringUtils.isBlank(tfZ1.getText())) {
-			alerta.append("\nNÂº Dentes PinhÃ£o: deve ser preenchido");
+			alerta.append("\nNº Dentes Pinhão: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				Z1 = new Integer(tfZ1.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor do NÂº de Dentes do PinhÃ£o deve ser um nÃºmero inteiro");
+				alerta.append("\nO valor do Nº de Dentes do Pinhão deve ser um número inteiro");
 				validate = false;
 			}
 		}
 		if (tfZ2 == null || StringUtils.isBlank(tfZ2.getText())) {
-			alerta.append("\nNÂº Dentes Coroa: deve ser preenchido");
+			alerta.append("\nNº Dentes Coroa: deve ser preenchido");
 			validate = false;
 		} else {
 			try {
 				Z2 = new Integer(tfZ2.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor do NÂº de Dentes da Coroa deve ser um nÃºmero inteiro");
+				alerta.append("\nO valor do Nº de Dentes da Coroa deve ser um número inteiro");
 				validate = false;
 			}
 		}
@@ -286,20 +294,20 @@ public class SampleController {
 			try {
 				fatorForma = new Double(tfFatorForma.getText());
 			} catch (Exception e) {
-				alerta.append("\nO valor do Fator de Forma deve ser um nÃºmero decimal");
+				alerta.append("\nO valor do Fator de Forma deve ser um número decimal");
 				validate = false;
 			}
 		}
-		
+
 		return validate;
 	}
-	
+
 
 
 	private double round2Decimal(double value) {
 		return Math.round(value * 100.0) / 100.0;
 	}
-	
+
 	private void showAlert(String title, String message) {
 		Alert alert = new Alert(Alert.AlertType.WARNING);
 	    alert.initModality(Modality.APPLICATION_MODAL);
@@ -308,59 +316,59 @@ public class SampleController {
 	    alert.setHeaderText("");
 	    alert.show();
 	}
-	
+
 
 	@FXML
 	public void recalcula(ActionEvent event) {
 		if (tfModuloNormalizado == null || StringUtils.isBlank(tfModuloNormalizado.getText())) {
-			showAlert("ValidaÃ§Ã£o de Campos", "O campo MÃ³dulo Normalizado Ã© obrigatÃ³rio");
+			showAlert("Validação de Campos", "O campo Módulo Normalizado é obrigatório");
 			return;
 		} else {
 			try {
-				moduloEngrenamentoNormalizado = new Double(tfModuloNormalizado.getText()); 
+				moduloEngrenamentoNormalizado = new Double(tfModuloNormalizado.getText());
 			} catch (Exception e) {
-				showAlert("ValidaÃ§Ã£o de Campos", "O valor do MÃ³dulo Normalizado deve ser um nÃºmero decimal");
+				showAlert("Validação de Campos", "O valor do Módulo Normalizado deve ser um número decimal");
 				return;
 			}
 		}
 		calculaNormalizado();
 		showAlertTensaoMaxima(round2Decimal(tensaoMaxima));
 	}
-	
+
 	private void calculaNormalizado() {
 		preencheTopicoGridPane("Normalizando");
-		preencheGridPane("MÃ³dulo Engrenamento Normalizado (mn) [mm]", moduloEngrenamentoNormalizado);
-		
+		preencheGridPane("Módulo Engrenamento Normalizado (mn) [mm]", moduloEngrenamentoNormalizado);
+
 		diametroPrimitivoNormalizado = calc.calculaDiametroPrimitivo(moduloEngrenamentoNormalizado, Z1);
-		preencheGridPane("DiÃ¢metro Primitivo Normalizado [mm]", diametroPrimitivoNormalizado);
-		
+		preencheGridPane("Diâmetro Primitivo Normalizado [mm]", diametroPrimitivoNormalizado);
+
 		larguraEngrenagem = calc.calculaLarguraEngrenagem(volumeMinimo, diametroPrimitivoNormalizado);
-		preencheGridPane("Largura do PinhÃ£o [mm]", larguraEngrenagem);
+		preencheGridPane("Largura do Pinhão [mm]", larguraEngrenagem);
 
 		forcaTangencial = calc.calculaForcaTangencial(Mt, diametroPrimitivoNormalizado);
-		preencheGridPane("ForÃ§a Tangencial (Ft) [N]", forcaTangencial);
-		
+		preencheGridPane("Força Tangencial (Ft) [N]", forcaTangencial);
+
 		tensaoMaxima = calc.calculaTensaoMaxima(forcaTangencial, fatorForma, fatorServico, larguraEngrenagem, moduloEngrenamentoNormalizado);
-		preencheGridPane("TensÃ£o MÃ¡xima [MPa]", tensaoMaxima);
-		
+		preencheGridPane("Tensão Máxima [MPa]", tensaoMaxima);
+
 	}
-	
+
 	private void showAlertTensaoMaxima(double value) {
 		StringBuilder alerta = new StringBuilder();
-		alerta.append("O valor da TensÃ£o que estarÃ¡ atuando na engrenagem Ã© de " + value + " MPa.")
-			.append("\n\nVerifique se essa tensÃ£o Ã© inferior Ã  tensÃ£o admissÃ­vel do material da engrenagem. ")
-			.append("Caso seja maior, hÃ¡ duas hipÃ³teses para redimensionar a engrenagem. ")
-			.append("\n1Âª HipÃ³tese: redimensionar pela TensÃ£o admissÃ­vel.")
-			.append("\n2Âª HipÃ³tese: alterar o mÃ³dulo de engrenamento.")
+		alerta.append("O valor da Tensão que estará atuando na engrenagem é de " + value + " MPa.")
+			.append("\n\nVerifique se essa tensão é inferior à tensão admissível do material da engrenagem. ")
+			.append("Caso seja maior, há duas hipóteses para redimensionar a engrenagem. ")
+			.append("\n1ª Hipótese: redimensionar pela Tensão admissível.")
+			.append("\n2ª Hipótese: alterar o módulo de engrenamento.")
 			.append("\n\nDesejar redimensionar a engrenagem?");
-		
+
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 	    alert.initModality(Modality.APPLICATION_MODAL);
-	    alert.setTitle("TensÃ£o MÃ¡xima");
+	    alert.setTitle("Tensão Máxima");
 	    alert.setContentText(alerta.toString());
 	    alert.setHeaderText("");
 	    alert.showAndWait();
-	    
+
 	    if (alert.getResult() == ButtonType.OK) {
 	    	btCalcular.setVisible(false);
 	    	btRecalcular.setVisible(false);
@@ -375,7 +383,7 @@ public class SampleController {
 	    }
 	}
 
-	@FXML 
+	@FXML
 	public void limpar(ActionEvent event) {
 		tfPotencia.setText(null);
 		tfRotacao.setText(null);
@@ -390,14 +398,14 @@ public class SampleController {
 		tfModuloNormalizado.setText(null);
 		tfTensaoAdmissivel.setText(null);
 		tfNovoModulo.setText(null);
-		
+
 		for (int i = 0; i < gpResultado.getChildren().size(); i++) {
 			if (gpResultado.getChildren().get(i) instanceof Label) {
 				gpResultado.getChildren().remove(i);
 				i--;
 			}
 		}
-		
+
 		btCalcular.setVisible(true);
 		btRecalcular.setVisible(false);
 
@@ -410,64 +418,167 @@ public class SampleController {
     	btRedimensionar.setVisible(false);
     	moduloEngrenamento = 0;
     	moduloEngrenamentoNormalizado = 0;
+    	btResumo.setVisible(false);
 	}
 
-	@FXML 
+	@FXML
 	public void redimensiona(ActionEvent event) {
 		StringBuilder alerta = new StringBuilder();
 		boolean validate = true;
 		if (tfTensaoAdmissivel == null || StringUtils.isBlank(tfTensaoAdmissivel.getText())) {
-			alerta.append("O campo Nova Largura Ã© obrigatÃ³rio");
+			alerta.append("O campo Nova Largura é obrigatório");
 			validate = false;
 		} else {
 			try {
-				tensaoAdmissivel = new Double(tfTensaoAdmissivel.getText()); 
+				tensaoAdmissivel = new Double(tfTensaoAdmissivel.getText());
 			} catch (Exception e) {
-				alerta.append("O valor da Nova Largura deve ser um nÃºmero decimal");
+				alerta.append("O valor da Nova Largura deve ser um número decimal");
 				validate = false;
 			}
 		}
 		if (tfNovoModulo == null || StringUtils.isBlank(tfNovoModulo.getText())) {
-			alerta.append("O campo Novo MÃ³dulo Ã© obrigatÃ³rio");
+			alerta.append("O campo Novo Módulo é obrigatório");
 			validate = false;
 		} else {
 			try {
-				novoModulo = new Double(tfNovoModulo.getText()); 
+				novoModulo = new Double(tfNovoModulo.getText());
 			} catch (Exception e) {
-				alerta.append("O valor do Novo MÃ³dulo deve ser um nÃºmero decimal");
+				alerta.append("O valor do Novo Módulo deve ser um número decimal");
 				validate = false;
 			}
 		}
-		
+
 		if (!validate) {
-			showAlert("ValidaÃ§Ã£o de Campos", alerta.toString());
+			showAlert("Validação de Campos", alerta.toString());
 			return;
 		}
 		redimensionaPelaTensao();
 		redimensionaPeloModulo();
+		btRedimensionar.setVisible(false);
+		btResumo.setVisible(true);
 	}
-	
+
 	private void redimensionaPelaTensao() {
-		preencheTopicoGridPane("1Âª HipÃ³tese - pela TensÃ£o AdmissÃ­vel");
+		preencheTopicoGridPane("1ª Hipótese - pela Tensão Admissível");
 		double larguraEngrenagemRed = calc.calculaLarguraEngrenagem(forcaTangencial, fatorForma, fatorServico, moduloEngrenamentoNormalizado, tensaoAdmissivel);
-		preencheGridPane("Largura do PinhÃ£o Redimensionado [mm]", larguraEngrenagemRed);
-		
+		preencheGridPane("Largura do Pinhão Redimensionado [mm]", larguraEngrenagemRed);
+
 		double novaRazaoLarguraDiametro = calc.calculaRazaoLarguraDiametroPrimitivo(larguraEngrenagemRed, diametroPrimitivoNormalizado);
-		preencheGridPane("Nova RazÃ£o entre Largura e DiÃ¢metro Primitivo", novaRazaoLarguraDiametro);
+		preencheGridPane("Nova Razão entre Largura e Diâmetro Primitivo", novaRazaoLarguraDiametro);
 	}
-	
+
 	private void redimensionaPeloModulo() {
-		preencheTopicoGridPane("2Âª HipÃ³tese - pelo MÃ³dulo");
-		preencheGridPane("MÃ³dulo Redimensionado [mm]", novoModulo);
-		
+		preencheTopicoGridPane("2ª Hipótese - pelo Módulo");
+		preencheGridPane("Módulo Redimensionado [mm]", novoModulo);
+
 		double diametroPrimitivoRed = calc.calculaDiametroPrimitivo(novoModulo, Z1);
-		preencheGridPane("DiÃ¢metro Primitivo Redimensionado [mm]", diametroPrimitivoRed);
-		
+		preencheGridPane("Diâmetro Primitivo Redimensionado [mm]", diametroPrimitivoRed);
+
 		double forcaTangencialRed = calc.calculaForcaTangencial(Mt, diametroPrimitivoRed);
-		preencheGridPane("ForÃ§a Tangencial Redimensionada (Ft) [N]", forcaTangencialRed);
-		
+		preencheGridPane("Força Tangencial Redimensionada (Ft) [N]", forcaTangencialRed);
+
 		double tensaoMaximaRed = calc.calculaTensaoMaxima(forcaTangencialRed, fatorForma, fatorServico, larguraEngrenagem, novoModulo);
-		preencheGridPane("TensÃ£o MÃ¡xima Redimensionada [MPa]", tensaoMaximaRed);
-		
+		preencheGridPane("Tensão Máxima Redimensionada [MPa]", tensaoMaximaRed);
+
+	}
+
+	private int index = 0;
+	@FXML
+	public void exibirResumo(ActionEvent event) {
+		index = 0;
+
+		GeometricGearCalculation ggc = new GeometricGearCalculation();
+		showScene();
+		preencheGridPaneResumoCabecalho("Formulário", "Pinhão (mm)", "Coroa (mm)");
+		preencheGridPaneResumo("Módulo normalizado DIN 780", "mn = " + moduloEngrenamentoNormalizado, "mn = " + moduloEngrenamentoNormalizado);
+		double passo = round2Decimal(ggc.passo(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Passo to = mn . PI", "to = " + passo, "to = " + passo);
+		double vaoEntreDentes = round2Decimal(ggc.vaoEntreDentes(passo));
+		preencheGridPaneResumo("Vão entre os dentes lo", "lo = " + vaoEntreDentes, "lo = " + vaoEntreDentes);
+		double alturaCabeca = round2Decimal(ggc.alturaCabeca(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Altura da cabeça do dente hk", "hk = " + alturaCabeca, "hk = " + alturaCabeca);
+		double alturaPe = round2Decimal(ggc.alturaPe(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Altura do pé do dente hf", "hf = " + alturaPe, "hf = " + alturaPe);
+		double alturaComum = round2Decimal(ggc.alturaComum(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Altura comum do dente h", "h = " + alturaComum, "h = " + alturaComum);
+		double alturaTotal = round2Decimal(ggc.alturaTotal(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Altura total do dente hz", "hz = " + alturaTotal, "hz = " + alturaTotal);
+		double espessuraDente = round2Decimal(ggc.espessuraDente(passo));
+		preencheGridPaneResumo("Espessura do dente So", "So = " + espessuraDente, "So = " + espessuraDente);
+		double folgaCabeca = round2Decimal(ggc.folgaCabeca(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Folga da cabeça Sk", "Sk = " + folgaCabeca, "Sk = " + folgaCabeca);
+		double diametroPrimitivoZ1 = round2Decimal(ggc.diametroPrimitivo(moduloEngrenamentoNormalizado, Z1));
+		double diametroPrimitivoZ2 = round2Decimal(ggc.diametroPrimitivo(moduloEngrenamentoNormalizado, Z2));
+		preencheGridPaneResumo("Diâmetro primitivo do", "do1 = " + diametroPrimitivoZ1, "do2 = " + diametroPrimitivoZ2);
+		double diametroBaseZ1 = round2Decimal(ggc.diametroBase(diametroPrimitivoZ1, anguloPressao));
+		double diametroBaseZ2 = round2Decimal(ggc.diametroBase(diametroPrimitivoZ2, anguloPressao));
+		preencheGridPaneResumo("Diâmetro de base dg", "dg1 = " + diametroBaseZ1, "dg2 = " + diametroBaseZ2);
+		double diametroInternoZ1 = round2Decimal(ggc.diametroInterno(diametroPrimitivoZ2, moduloEngrenamentoNormalizado));
+		double diametroInternoZ2 = round2Decimal(ggc.diametroInterno(diametroPrimitivoZ2, moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Diâmetro interno df", "df1 = " + diametroInternoZ1, "df2 = " + diametroInternoZ2);
+		double diametroExternoZ1 = round2Decimal(ggc.diametroExterno(diametroPrimitivoZ1, moduloEngrenamentoNormalizado));
+		double diametroExternoZ2 = round2Decimal(ggc.diametroExterno(diametroPrimitivoZ2, moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Diâmetro externo dk", "dk1 = " + diametroExternoZ1, "dk2 = " + diametroExternoZ2);
+
+		double distanciaCentros = round2Decimal(ggc.distanciaEntreCentros(diametroPrimitivoZ1, diametroPrimitivoZ2));
+		preencheGridPaneResumo("Distância entre centros C", "C = " + distanciaCentros, "C = " + distanciaCentros);
+
+		preencheGridPaneResumo("Largura das engrenagens", "b1 = " + larguraEngrenagem, "b2 = " + larguraEngrenagem);
+
+		GearMath gm = new GearMath();
+		double adendo = round2Decimal(gm.getAddendum(diametroPrimitivoZ1, Z1));
+		preencheGridPaneResumo("Adendo", "a = " + adendo, "a = " + adendo);
+		double dedendo = round2Decimal(gm.getDedendum(moduloEngrenamentoNormalizado));
+		preencheGridPaneResumo("Dedendo", "d = " + dedendo, "d = " + dedendo);
+
+	}
+
+	private void showScene() {
+		try {
+			VBox root = (VBox)FXMLLoader.load(getClass().getResource("Resumo.fxml"));
+
+			Scene scene = new Scene(root,600,550);
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.show();
+			stage.setMaxWidth(stage.getWidth());
+			stage.setMaxHeight(stage.getHeight());
+			stage.setTitle("Resumo");
+			AnchorPane ap = (AnchorPane) root.getChildren().get(0);
+			ScrollPane sp = (ScrollPane) ap.getChildren().get(1);
+			AnchorPane ap1 = (AnchorPane) sp.getContent();
+			gpResumo = (GridPane) ap1.getChildren().get(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void preencheGridPaneResumoCabecalho(String label, String value1, String value2) {
+		Font fonte = Font.font("Verdana", FontWeight.BOLD, 12);
+		Label lb1 = new Label(label);
+		lb1.setFont(fonte);
+		Label lb2 = new Label(value1);
+		lb2.setFont(fonte);
+		Label lb3 = new Label(value2);
+		lb3.setFont(fonte);
+		gpResumo.addRow(index, lb1);
+		gpResumo.addRow(index, lb2);
+		gpResumo.addRow(index, lb3);
+		index++;
+	}
+
+	private void preencheGridPaneResumo(String label, String value1, String value2) {
+		Font fonte = new Font(11);
+		Label lb1 = new Label(label);
+		lb1.setFont(fonte);
+		Label lb2 = new Label(value1);
+		lb2.setFont(fonte);
+		Label lb3 = new Label(value2);
+		lb3.setFont(fonte);
+		gpResumo.addRow(index, lb1);
+		gpResumo.addRow(index, lb2);
+		gpResumo.addRow(index, lb3);
+		index++;
 	}
 }
