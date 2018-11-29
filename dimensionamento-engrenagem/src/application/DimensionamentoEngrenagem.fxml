@@ -114,12 +114,12 @@
                   <TextField fx:id="tfZ2" GridPane.columnIndex="4" GridPane.rowIndex="6" />
                   <TextField fx:id="tfFatorForma" GridPane.columnIndex="4" GridPane.rowIndex="8" />
                   <Button fx:id="btCalcular" mnemonicParsing="false" onAction="#calcula" text="Calcular" GridPane.columnIndex="3" GridPane.rowIndex="10" />
-                  <Button fx:id="btPanelDureza" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="2.0" mnemonicParsing="false" text="..." GridPane.columnIndex="2" GridPane.rowIndex="4">
+                  <Button fx:id="btPanelDureza" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="2.0" mnemonicParsing="false" text="..." visible="false" GridPane.columnIndex="2" GridPane.rowIndex="4">
                      <font>
                         <Font size="6.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btPanelFatorServico" mnemonicParsing="false" text="..." GridPane.columnIndex="5">
+                  <Button fx:id="btPanelFatorServico" mnemonicParsing="false" text="..." visible="false" GridPane.columnIndex="5">
                      <font>
                         <Font size="6.0" />
                      </font>
@@ -135,7 +135,7 @@
                         <Font size="11.0" />
                      </font>
                   </Label>
-                  <Label fx:id="lbNovoModulo" text="Novo Módulo" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="12">
+                  <Label fx:id="lbNovoModulo" text="Novo Módulo:" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="12">
                      <font>
                         <Font size="11.0" />
                      </font>
@@ -145,17 +145,17 @@
                   <TextField fx:id="tfNovoModulo" visible="false" GridPane.columnIndex="4" GridPane.rowIndex="12" />
                   <Button fx:id="btRedimensionar" mnemonicParsing="false" onAction="#redimensiona" text="Redimensionar" visible="false" GridPane.columnIndex="3" GridPane.rowIndex="14" />
                   <Button fx:id="btLimpar" mnemonicParsing="false" onAction="#limpar" text="Limpar" GridPane.columnIndex="4" GridPane.rowIndex="10" />
-                  <Button fx:id="btPanelLarguraDiametro" mnemonicParsing="false" text="..." GridPane.columnIndex="5" GridPane.rowIndex="2">
+                  <Button fx:id="btPanelLarguraDiametro" mnemonicParsing="false" text="..." visible="false" GridPane.columnIndex="5" GridPane.rowIndex="2">
                      <font>
                         <Font size="6.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btPanelFatorForma" mnemonicParsing="false" text="..." GridPane.columnIndex="5" GridPane.rowIndex="8">
+                  <Button fx:id="btPanelFatorForma" mnemonicParsing="false" text="..." visible="false" GridPane.columnIndex="5" GridPane.rowIndex="8">
                      <font>
                         <Font size="6.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btResumo" onAction="#exibirResumo" visible="false" mnemonicParsing="false" text="Resumo" GridPane.columnIndex="4" GridPane.rowIndex="14" />
+                  <Button fx:id="btResumo" mnemonicParsing="false" onAction="#exibirResumo" text="Resumo" visible="false" GridPane.columnIndex="4" GridPane.rowIndex="14" />
                </children>
             </GridPane>
             <Line endX="404.0" layoutX="124.0" layoutY="312.0" startX="-100.0" />

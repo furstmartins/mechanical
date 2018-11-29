@@ -97,6 +97,7 @@ public class SampleController {
 
 	double tensaoAdmissivel = 0;
 	double novoModulo = 0;
+	private boolean jaRecalculou = false;
 
 	@FXML
 	public void calcula(ActionEvent event) {
@@ -331,7 +332,11 @@ public class SampleController {
 				return;
 			}
 		}
+		if (jaRecalculou) {
+			limpaGripPaneNormalizado();
+		}
 		calculaNormalizado();
+		jaRecalculou = true;
 		showAlertTensaoMaxima(round2Decimal(tensaoMaxima));
 	}
 
@@ -353,6 +358,15 @@ public class SampleController {
 
 	}
 
+	private void limpaGripPaneNormalizado() {
+		int size = gpResultado.getChildren().size();
+		for (int i = size-1; i >= size - 8; i--) {
+			if (gpResultado.getChildren().get(i) instanceof Label) {
+				gpResultado.getChildren().remove(i);
+//				i;
+			}
+		}
+	}
 	private void showAlertTensaoMaxima(double value) {
 		StringBuilder alerta = new StringBuilder();
 		alerta.append("O valor da Tensão que estará atuando na engrenagem é de " + value + " MPa.")
@@ -378,8 +392,10 @@ public class SampleController {
 	    	tfTensaoAdmissivel.setVisible(true);
 	    	tfNovoModulo.setVisible(true);
 	    	btRedimensionar.setVisible(true);
+	    	btResumo.setVisible(true);
 	    } else {
-	    	System.out.println("pressed cancel");
+	    	btResumo.setVisible(true);
+	    	btRecalcular.setVisible(false);
 	    }
 	}
 
@@ -419,6 +435,7 @@ public class SampleController {
     	moduloEngrenamento = 0;
     	moduloEngrenamentoNormalizado = 0;
     	btResumo.setVisible(false);
+    	jaRecalculou = false;
 	}
 
 	@FXML
@@ -491,6 +508,8 @@ public class SampleController {
 		showScene();
 		preencheGridPaneResumoCabecalho("Formulário", "Pinhão (mm)", "Coroa (mm)");
 		preencheGridPaneResumo("Módulo normalizado DIN 780", "mn = " + moduloEngrenamentoNormalizado, "mn = " + moduloEngrenamentoNormalizado);
+		preencheGridPaneResumo("Número de Dentes", "Z1 = " + Z1, "Z2 = " + Z2);
+		preencheGridPaneResumo("Razão de Contato", "i = " + i, "i = " + i);
 		double passo = round2Decimal(ggc.passo(moduloEngrenamentoNormalizado));
 		preencheGridPaneResumo("Passo to = mn . PI", "to = " + passo, "to = " + passo);
 		double vaoEntreDentes = round2Decimal(ggc.vaoEntreDentes(passo));
@@ -523,13 +542,20 @@ public class SampleController {
 		double distanciaCentros = round2Decimal(ggc.distanciaEntreCentros(diametroPrimitivoZ1, diametroPrimitivoZ2));
 		preencheGridPaneResumo("Distância entre centros C", "C = " + distanciaCentros, "C = " + distanciaCentros);
 
-		preencheGridPaneResumo("Largura das engrenagens", "b1 = " + larguraEngrenagem, "b2 = " + larguraEngrenagem);
+		preencheGridPaneResumo("Largura das engrenagens", "b = " + round2Decimal(larguraEngrenagem), "b = " + round2Decimal(larguraEngrenagem));
 
 		GearMath gm = new GearMath();
 		double adendo = round2Decimal(gm.getAddendum(diametroPrimitivoZ1, Z1));
 		preencheGridPaneResumo("Adendo", "a = " + adendo, "a = " + adendo);
 		double dedendo = round2Decimal(gm.getDedendum(moduloEngrenamentoNormalizado));
 		preencheGridPaneResumo("Dedendo", "d = " + dedendo, "d = " + dedendo);
+
+		double comprimentoAcao = round2Decimal(gm.getComprimentoAcao(diametroExternoZ1/2, diametroBaseZ1/2, diametroExternoZ2/2, diametroBaseZ2/2, distanciaCentros, anguloPressao));
+		preencheGridPaneResumo("Comprimento de Ação", "Z = " + comprimentoAcao, "Z = " + comprimentoAcao);
+		double passoBase = round2Decimal(gm.getPb(diametroBaseZ1/2, Z1));
+		preencheGridPaneResumo("Passo Base", "Pb = " + passoBase, "Pb = " + passoBase);
+		double razaoContato = round2Decimal(gm.getRazaoContato(comprimentoAcao, passoBase));
+		preencheGridPaneResumo("Razão de Contato", "mp = " + razaoContato, "mp = " + razaoContato);
 
 	}
 
