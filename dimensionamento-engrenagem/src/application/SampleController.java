@@ -454,13 +454,13 @@ public class SampleController {
 			}
 		}
 		if (tfNovoModulo == null || StringUtils.isBlank(tfNovoModulo.getText())) {
-			alerta.append("O campo Novo Módulo é obrigatório");
+			alerta.append("\nO campo Novo Módulo é obrigatório");
 			validate = false;
 		} else {
 			try {
 				novoModulo = new Double(tfNovoModulo.getText());
 			} catch (Exception e) {
-				alerta.append("O valor do Novo Módulo deve ser um número decimal");
+				alerta.append("\nO valor do Novo Módulo deve ser um número decimal");
 				validate = false;
 			}
 		}
