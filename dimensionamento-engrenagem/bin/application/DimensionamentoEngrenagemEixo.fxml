@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -214,8 +215,8 @@
                                                       <Font size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="tfFatorSeguranca" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <TextField fx:id="tfTensaoAdmFlexao" GridPane.columnIndex="1" />
+                                                <TextField fx:id="tfFatorSeguranca" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <Label prefHeight="17.0" prefWidth="145.0" text="N (fator de segurança)" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="11.0" />
@@ -313,7 +314,184 @@
                                     </AnchorPane>
                                  </content>
                               </Tab>
-                            <Tab text="Goodman" />
+                            <Tab text="Goodman">
+                                 <content>
+                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="510.0" prefWidth="545.0">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" text="Informe os parâmetros de entrada abaixo" />
+                                          <GridPane layoutX="14.0" layoutY="49.0" prefHeight="161.0" prefWidth="499.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="161.0" minWidth="10.0" prefWidth="155.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="316.0" minWidth="134.0" prefWidth="134.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="316.0" minWidth="10.0" prefWidth="10.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="316.0" minWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="316.0" minWidth="100.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label text="Tensão Ruptura (Stu) [MPa]">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K Tipo de Carregamento" GridPane.rowIndex="2">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K tamanho" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K Superficie Material" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K temperatura" GridPane.columnIndex="3">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K Confiabilidade" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="tfTensaoRuptura" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="75.0" GridPane.columnIndex="1" />
+                                                <ComboBox fx:id="cbTipoCarregamento" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <TextField fx:id="tfKtamanho" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <ComboBox fx:id="cbSuperficeMaterial" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                <TextField fx:id="tfKtemperatura" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="75.0" GridPane.columnIndex="4" />
+                                                <ComboBox fx:id="cbConfiabilidade" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                                                <TextField fx:id="tfKf" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="75.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                                                <TextField fx:id="tfKfsm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="75.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                                                <Label text="Kf" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Kfsm" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Button mnemonicParsing="false" onAction="#calculaGoodman" text="Calcular" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+                                             </children>
+                                          </GridPane>
+                                          <Label layoutX="14.0" layoutY="210.0" text="Resultado" underline="true" />
+                                          <GridPane gridLinesVisible="true" layoutX="14.0" layoutY="227.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="129.0" minWidth="10.0" prefWidth="129.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.0" minWidth="10.0" prefWidth="71.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label text="Se' [MPa]">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K carregamento" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K tamanho" GridPane.rowIndex="2">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K superficie" GridPane.rowIndex="3">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K temperatura" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="K confiabilidade" GridPane.rowIndex="5">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Se [MPa]" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Diâmetro do eixo [mm]" GridPane.rowIndex="7">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbSeLinha" text="Label" visible="false" GridPane.columnIndex="1">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbKCarregamento" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbKTamanho" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbKSuperficie" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbKTemperatura" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbKConfiabilidade" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbSe" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lbDiamentroEixoGoodman" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content></Tab>
                           </tabs>
                         </TabPane>
                      </children>

@@ -3,6 +3,7 @@ package application;
 import org.apache.commons.lang3.StringUtils;
 
 import calculation.Calculator;
+import calculation.ComboBoxKeyPair;
 import calculation.GearMath;
 import calculation.GeometricGearCalculation;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -80,6 +82,24 @@ public class SampleController {
 	@FXML Label lbMomentoMaximo;
 	@FXML Label lbDiametroEixoVonMises;
 	
+	@FXML TextField tfTensaoRuptura;
+	@FXML TextField tfKtamanho;
+	@FXML TextField tfKtemperatura;
+	@FXML TextField tfKf;
+	@FXML TextField tfKfsm;
+	@FXML ComboBox<ComboBoxKeyPair> cbTipoCarregamento;
+	@FXML ComboBox<ComboBoxKeyPair> cbSuperficeMaterial;
+	@FXML ComboBox<ComboBoxKeyPair> cbConfiabilidade;
+	
+	@FXML Label lbSeLinha;
+	@FXML Label lbKCarregamento;
+	@FXML Label lbKTamanho;
+	@FXML Label lbKSuperficie;
+	@FXML Label lbKTemperatura;
+	@FXML Label lbKConfiabilidade;
+	@FXML Label lbSe;
+	@FXML Label lbDiamentroEixoGoodman;
+	
 	
 	double potencia;
 	double n;
@@ -124,10 +144,19 @@ public class SampleController {
 	private double forcaTangencial2 = 0;
 	private double anguloPressao2 = 0;
 	private double momentoMaximo = 0;
+	private double diametroVonMises = 0;
+	
+	//Eixo Goodman
+	private double tensaoRuptura = 0;
+	private double ktamanho = 0;
+	private double ktemperatura = 0;
+	private double kf = 0;
+	private double kfsm = 0;
 
+	private static boolean jaInicializado = false;
+	
 	@FXML
 	public void calcula(ActionEvent event) {
-		//TODO retirar 
 //		tfPotencia.setText("10000");
 //		tfRotacao.setText("1750");
 //		tfDureza.setText("6000");
@@ -626,7 +655,6 @@ public class SampleController {
 		StringBuilder alerta = new StringBuilder();
 		boolean validate = validaCamposEixo(alerta);
 
-
 		if (!validate) {
 			showAlert("Campos obrigatórios não preenchidos", alerta.toString());
 			return;
@@ -651,9 +679,12 @@ public class SampleController {
 		lbMomentoMaximo.setText(String.valueOf(round2Decimal(momentoMaximo)));
 		lbMomentoMaximo.setVisible(true);
 		
-		double diametro = formulaVonMisses(tensaoAdmFlexao, fatorSeguranca, momentoMaximo, momentoTorcor);
-		lbDiametroEixoVonMises.setText(String.valueOf(round2Decimal(diametro)));
+		diametroVonMises = formulaVonMisses(tensaoAdmFlexao, fatorSeguranca, momentoMaximo, momentoTorcor);
+		lbDiametroEixoVonMises.setText(String.valueOf(round2Decimal(diametroVonMises)));
 		lbDiametroEixoVonMises.setVisible(true);
+		
+		ktamanho = 1.24 * Math.pow(diametroVonMises, -0.107);
+		tfKtamanho.setText(String.valueOf(round2Decimal(ktamanho)));
 		
 	}
 	
@@ -805,5 +836,181 @@ public class SampleController {
 				(32/(Math.PI * tensaoAdmissivelFlexao/fatorSeguranca)) *
 				Math.sqrt(Math.pow(momento, 2) + (3 * Math.pow(torque, 2)/4)));
 		
+	}
+	
+	@FXML
+	public void calculaGoodman(ActionEvent event) {
+//		tensaoRuptura = 496;
+//		cbTipoCarregamento.getSelectionModel().selectFirst();
+//		ktamanho = 0.921;
+//		cbSuperficeMaterial.getItems().removeAll(cbSuperficeMaterial.getItems());
+//		cbSuperficeMaterial.getItems().addAll(new ComboBoxKeyPair(57.7, -0.718, "Laminado à Quente"));
+//		cbSuperficeMaterial.getSelectionModel().selectFirst();
+//		ktemperatura = 1;
+//		cbConfiabilidade.getItems().removeAll(cbConfiabilidade.getItems());
+//		cbConfiabilidade.getItems().addAll(new ComboBoxKeyPair(0.814, "99%"));
+//		cbConfiabilidade.getSelectionModel().selectFirst();
+//		kf = 1.25;
+//		kfsm = 1.25;
+		
+		StringBuilder alerta = new StringBuilder();
+		boolean validate = validaCamposEixoGoodman(alerta);
+
+		if (!validate) {
+			showAlert("Campos obrigatórios não preenchidos", alerta.toString());
+			return;
+		}
+		
+		double Se_linha = 0.504 * tensaoRuptura;
+		
+		lbSeLinha.setText(String.valueOf(round2Decimal(Se_linha)));
+		lbSeLinha.setVisible(true);
+		
+		double carregamento = 0;
+		ComboBoxKeyPair carregamentoChoised = cbTipoCarregamento.getValue();
+		if (tensaoRuptura > 1400 && carregamentoChoised.getValue().equals("Axial")) {
+			carregamento = 0.922;
+		} else {
+			carregamento = carregamentoChoised.getKey();
+		}
+		lbKCarregamento.setText(String.valueOf(carregamento));
+		lbKCarregamento.setVisible(true);
+		
+		lbKTamanho.setText(String.valueOf(round2Decimal(ktamanho)));
+		lbKTamanho.setVisible(true);
+		
+		ComboBoxKeyPair superficieChoised = cbSuperficeMaterial.getValue();
+		double superficie = superficieChoised.getKey() * Math.pow(tensaoRuptura, superficieChoised.getA());
+		lbKSuperficie.setText(String.valueOf(round2Decimal(superficie)));
+		lbKSuperficie.setVisible(true);
+		
+		lbKTemperatura.setText(String.valueOf(round2Decimal(ktemperatura)));
+		lbKTemperatura.setVisible(true);
+		
+		ComboBoxKeyPair confiabilidadeChoised = cbConfiabilidade.getValue();
+		lbKConfiabilidade.setText(String.valueOf(round2Decimal(confiabilidadeChoised.getKey())));
+		lbKConfiabilidade.setVisible(true);
+		
+		double se = carregamento * ktamanho * superficie * ktemperatura * confiabilidadeChoised.getKey() * Se_linha;
+		lbSe.setText(String.valueOf(round2Decimal(se)));
+		lbSe.setVisible(true);
+		
+		double diametro = formulaGoodman(fatorSeguranca, kf, momentoMaximo, se, kfsm, momentoTorcor, tensaoAdmFlexao);
+		lbDiamentroEixoGoodman.setText(String.valueOf(round2Decimal(diametro)));
+		lbDiamentroEixoGoodman.setVisible(true);
+	}
+	
+	private boolean validaCamposEixoGoodman(StringBuilder alerta) {
+		boolean validate = true;
+		if (tfTensaoRuptura == null || StringUtils.isBlank(tfTensaoRuptura.getText())) {
+			alerta.append("Tensão Ruptura (Stu) [MPa]: deve ser preenchido");
+			validate = false;
+		} else {
+			try {
+				tensaoRuptura = new Double(tfTensaoRuptura.getText());
+			} catch (Exception e) {
+				alerta.append("O valor da Tensão de Ruptura deve ser um número decimal");
+				validate = false;
+			}
+		}
+
+		if (cbTipoCarregamento == null || cbTipoCarregamento.getValue() == null) {
+			alerta.append("\nK Tipo de Carregamento: deve ser preenchido");
+			validate = false;
+		}
+
+		if (tfKtamanho == null || StringUtils.isBlank(tfKtamanho.getText())) {
+			alerta.append("\nK Tamanho: deve ser preenchido");
+			validate = false;
+		} else {
+			try {
+				ktamanho = new Double(tfKtamanho.getText());
+			} catch (Exception e) {
+				alerta.append("\nO valor de K Tamanho deve ser um número decimal");
+				validate = false;
+			}
+		}
+
+		if (cbSuperficeMaterial == null || cbSuperficeMaterial.getValue() == null) {
+			alerta.append("\nK Superficie do Material: deve ser preenchido");
+			validate = false;
+		}
+		
+		if (tfKtemperatura == null || StringUtils.isBlank(tfKtemperatura.getText())) {
+			alerta.append("\nK Temperatura: deve ser preenchido");
+			validate = false;
+		} else {
+			try {
+				ktemperatura = new Double(tfKtemperatura.getText());
+			} catch (Exception e) {
+				alerta.append("\nO valor de K Temperatura deve ser um número decimal");
+				validate = false;
+			}
+		}
+		
+		if (cbConfiabilidade == null || cbConfiabilidade.getValue() == null) {
+			alerta.append("\nK Confiabilidade: deve ser preenchido");
+			validate = false;
+		}
+
+		if (tfKf == null || StringUtils.isBlank(tfKf.getText())) {
+			alerta.append("\nKf: deve ser preenchido");
+			validate = false;
+		} else {
+			try {
+				kf = new Double(tfKf.getText());
+			} catch (Exception e) {
+				alerta.append("\nO valor de Kf deve ser um número decimal");
+				validate = false;
+			}
+		}
+
+		if (tfKfsm == null || StringUtils.isBlank(tfKfsm.getText())) {
+			alerta.append("\nKfsm: deve ser preenchido");
+			validate = false;
+		} else {
+			try {
+				kfsm = new Double(tfKfsm.getText());
+			} catch (Exception e) {
+				alerta.append("\nO valor de Kfsm deve ser um número decimal");
+				validate = false;
+			}
+		}
+		return validate;
+	}
+	
+	private double formulaGoodman(double Nf, double Kf, double M, double Sn, double Kfsm, double T, double Sy) {
+		return Math.cbrt(
+				(32 * Nf)/Math.PI * 
+				Math.sqrt(Math.pow(Kf * (M / Sn), 2) + (3 * Math.pow(Kfsm * (T/Sy), 2)/4)));
+	}
+	
+	@FXML
+	public void initialize() {
+		if (!jaInicializado) {
+			cbTipoCarregamento.getItems().removeAll(cbTipoCarregamento.getItems());
+			cbTipoCarregamento.getItems().addAll(
+					new ComboBoxKeyPair(0.577, "Cisalhamento/Torção"),
+					new ComboBoxKeyPair(1.0, "Flexão"),
+					new ComboBoxKeyPair(1.0, "Axial"));
+			
+			cbSuperficeMaterial.getItems().removeAll(cbSuperficeMaterial.getItems());
+			cbSuperficeMaterial.getItems().addAll(
+					new ComboBoxKeyPair(1.58, -0.085, "Retificada"),
+					new ComboBoxKeyPair(4.51, -0.265, "Usinado/Estirado à Frio"),
+					new ComboBoxKeyPair(57.7, -0.718, "Laminado à Quente"),
+					new ComboBoxKeyPair(272.0, -0.995, "Forjado"));
+			
+			cbConfiabilidade.getItems().removeAll(cbConfiabilidade.getItems());
+			cbConfiabilidade.getItems().addAll(
+					new ComboBoxKeyPair(0.897, "90%"),
+					new ComboBoxKeyPair(0.868, "95%"),
+					new ComboBoxKeyPair(0.814, "99%"),
+					new ComboBoxKeyPair(0.753, "99.9%"),
+					new ComboBoxKeyPair(0.702, "99.99%"),
+					new ComboBoxKeyPair(0.659, "99.999%"),
+					new ComboBoxKeyPair(0.620, "99.9999%"));
+			jaInicializado = true;
+		}
 	}
 }
